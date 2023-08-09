@@ -1,0 +1,19 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": ["esbenp.prettier-vscode", "source.fixAll.eslint"],
+  "search.exclude": {
+    "output/craw-crecisp/**": true
+  },
+  "files.exclude": {
+    ".build": true,
+    ".serverless": true,
+    "output/craw-crecisp/**": true,
+    "test-report.xml": true,
+    "yarn-error.log": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "all",
+  "prettier.printWidth": 120
+}

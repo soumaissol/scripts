@@ -1,0 +1,35 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier", "simple-import-sort"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "project": "tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/no-unnecessary-condition": "warn",
+    "@babel/object-curly-spacing": "off",
+    "@typescript-eslint/object-curly-spacing": "off",
+    "object-curly-spacing": "off",
+    "@babel/semi": "off",
+    "no-process-env": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "no-console": "error",
+    "max-len": ["error", { "code": 120, "ignoreUrls": true }],
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "max_line_length": 120,
+        "singleQuote": true
+      }
+    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  }
+}

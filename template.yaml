@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  public-api
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Parameters:
+  Stage:
+    Type: String
+    Description: Runtime environment
+    Default: staging
+  PipefyAuthToken:
+    Type: String
+    Description: Pipefy auth token
+  PipefyApiUrl:
+    Type: String
+    Description: Pipefy api url
+  PipefyCustomersTableId:
+    Type: String
+    Description: Pipefy customers table id
+  PipefySalesAgentsTableId:
+    Type: String
+    Description: Pipefy sales agents table id
+  PipefyCustomerLeadsPipeId:
+    Type: String
+    Description: Pipefy customer leads pipe id
+  PipefySalesAgentLeadsPipeId:
+    Type: String
+    Description: Pipefy sales agent leads pipe id
+
+Resources:
+  SimulationApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  GetPowerDistributors:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/application/web/handlers/get-power-distributors.handler
+      FunctionName: PublicApi-GetPowerDistributors
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 100
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SimulationApi
+            Path: /simulations/power-distributors/{zip}
+            Method: GET
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: 'es2020'
+        Sourcemap: true
+        EntryPoints:
+          - src/application/web/handlers/get-power-distributors.ts
+
+  CalculateSimulation:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/application/web/handlers/calculate-simulation.handler
+      FunctionName: PublicApi-CalculateSimulation
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 100
+      Policies:
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SimulationApi
+            Path: /simulations/calculate
+            Method: POST
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: 'es2020'
+        Sourcemap: true
+        EntryPoints:
+          - src/application/web/handlers/calculate-simulation.ts
+
+  CreateCustomerLead:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/application/web/handlers/create-customer-lead.handler
+      FunctionName: PublicApi-CreateCustomerLead
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 100
+      Policies:
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SimulationApi
+            Path: /customerLead
+            Method: POST
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+          PIPEFY_AUTH_TOKEN: !Ref PipefyAuthToken
+          PIPEFY_API_URL: !Ref PipefyApiUrl
+          PIPEFY_CUSTOMERS_TABLE_ID: !Ref PipefyCustomersTableId
+          PIPEFY_SALES_AGENTS_TABLE_ID: !Ref PipefySalesAgentsTableId
+          PIPEFY_CUSTOMER_LEADS_PIPE_ID: !Ref PipefyCustomerLeadsPipeId
+          PIPEFY_SALES_AGENT_LEADS_PIPE_ID: !Ref PipefySalesAgentLeadsPipeId
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: 'es2020'
+        Sourcemap: true
+        EntryPoints:
+          - src/application/web/handlers/create-customer-lead.ts
+
+  CreateSalesAgentLead:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/application/web/handlers/create-sales-agent-lead.handler
+      FunctionName: PublicApi-CreateSalesAgentLead
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 100
+      Policies:
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SimulationApi
+            Path: /salesAgentLead
+            Method: POST
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+          PIPEFY_AUTH_TOKEN: !Ref PipefyAuthToken
+          PIPEFY_API_URL: !Ref PipefyApiUrl
+          PIPEFY_CUSTOMERS_TABLE_ID: !Ref PipefyCustomersTableId
+          PIPEFY_SALES_AGENTS_TABLE_ID: !Ref PipefySalesAgentsTableId
+          PIPEFY_CUSTOMER_LEADS_PIPE_ID: !Ref PipefyCustomerLeadsPipeId
+          PIPEFY_SALES_AGENT_LEADS_PIPE_ID: !Ref PipefySalesAgentLeadsPipeId
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: 'es2020'
+        Sourcemap: true
+        EntryPoints:
+          - src/application/web/handlers/create-sales-agent-lead.ts
+
+Outputs:
+  WebEndpoint:
+    Description: 'API Gateway endpoint URL for Prod stage'
+    Value: !Sub 'https://${SimulationApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
