@@ -9,6 +9,7 @@
     ".build": true,
     ".serverless": true,
     "output/craw-crecisp/**": true,
+    "output/legacy/**": true,
     "test-report.xml": true,
     "yarn-error.log": true
   },

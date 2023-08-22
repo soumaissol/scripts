@@ -7,6 +7,7 @@
     "async": "^3.2.4",
     "axios": "^0.24.0",
     "esbuild": "^0.15.13",
+    "html-entities": "^2.4.0",
     "sms-api-commons": "^0.0.13"
   },
   "devDependencies": {
@@ -24,8 +25,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "craw-crecisp": "ts-node src/craw-crecisp/index.ts",
-    "data-mining-crecisp": "ts-node src/data-mining-crecisp/index.ts"
-
+    "craw-crecisp": "tsc && ts-node src/craw-crecisp/index.ts",
+    "data-mining-crecisp": "tsc && ts-node src/data-mining-crecisp/index.ts"
   }
 }
